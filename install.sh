@@ -1,16 +1,45 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Setting up your Machine..."
 
 ###################  TOOLS and PKGs  ###################
 
-sudo apt update 
-sudo apt upgrade -y
-sudo apt install -y curl wget git unzip
-# development tools
-sudo apt install -y build-essential cmake python3-dev python3-pip
-# system tools
-sudo apt install -y htop neofetch net-tools tree 
+PKGs=(
+  "zsh"
+  "git"
+  "curl"
+  "wget"
+  "unzip"
+  "build-essential"
+  "cmake"
+  "python3-dev"
+  "python3-pip"
+  "htop"
+  "neofetch"
+  "net-tools"
+  "tree"
+  "ruby"
+  "ruby-dev"
+  "ruby-colorize"
+  "bat"
+  "fd-find"
+  "ripgrep"
+  "fzf"
+  "tmux")
+
+
+sudo apt-get update
+# install packages
+
+for pkg in "${PKGs[@]}"; do
+  if test ! $(which $pkg); then
+    sudo apt-get install -y $pkg
+  fi
+done
+
+
+sudo gem install colorls
+
 
 
 ###################  ZSH  ###################
@@ -46,32 +75,46 @@ git clone https://github.com/zsh-users/zsh-autosuggestions $OMZ_PLUGINS_DIR/zsh-
 sudo rm -rf $HOME/.zshrc
 ln -s $HOME/dotfiles/.zshrc $HOME/.zshrc
 
-###################  COLORLS  ###################
-
-# install  colorls
-sudo apt install ruby ruby-dev ruby-colorize
-sudo gem install colorls
-
-###################  BAT  ###################
 
 
 ################   STARSHIP  ###################
-
-
-###################  FONTS  ###################
-
-
 
 # check for starship and install if we don't have it
 if test ! $(which starship); then
   sh -c "$(curl -fsSL https://starship.rs/install.sh)"
 fi
 
+################   TMUX  ###################
+
+# install tmux plugin manager
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+
+
+
+################   NEOVIM  ###################
+
+# install neovim
+sudo add-apt-repository ppa:neovim-ppa/unstable
+sudo apt update
+sudo apt install neovim
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#### apply the .config directory from the dotfiles
 # remove $HOME/.config and symlink the .config directory from the dotfiles
 sudo rm -rf $HOME/.config
 ln -s $HOME/dotfiles/.config $HOME/.config
